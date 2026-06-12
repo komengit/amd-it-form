@@ -213,42 +213,47 @@
 
     <script>
         document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            const element = document.getElementById('form-to-print');
+            var element = document.getElementById('form-to-print');
             
-            // ซ่อนเส้นขอบของฟิลด์พิมพ์ชั่วคราว
-            const inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"]');
-            inputs.forEach(input => input.style.borderBottom = 'none');
-            const textareas = element.querySelectorAll('textarea');
-            textareas.forEach(textarea => textarea.style.border = 'none');
+            // ปรับแต่งเส้นขอบชั่วคราวเพื่อความสวยงามในหน้าเอกสาร PDF
+            var inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"]');
+            inputs.forEach(function(input) { input.style.borderBottom = 'none'; });
+            var textareas = element.querySelectorAll('textarea');
+            textareas.forEach(function(textarea) { textarea.style.border = 'none'; });
 
-            // เรียกใช้คำสั่ง html2canvas แบบดั้งเดิมที่เสถียรต่อเบราวเซอร์
+            // ใช้ html2canvas ทำการ Snap หน้าจอแบบไม่เก็บ Log ลึกๆ ที่อาจบล็อกการทำงานบนคลาวด์
             html2canvas(element, {
                 scale: 2,
                 useCORS: true,
-                logging: false
+                logging: false,
+                allowTaint: true
             }).then(function(canvas) {
-                const imgData = canvas.toDataURL('image/png');
+                var imgData = canvas.toDataURL('image/png');
                 
-                // วิธีประกาศเรียกใช้คลาสจาก window.jspdf ที่ถูกต้องที่สุด
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
+                // ค้นหาและเรียกใช้งานคลาสสร้างเอกสารในรูปแบบที่เข้ากันได้กับโครงสร้างเบราวเซอร์ทุกรุ่น
+                var InstancejsPDF = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF ? window.jsPDF : null);
                 
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                if (!InstancejsPDF) {
+                    alert("ไม่สามารถโหลดระบบสร้างเอกสารได้ กรุณารีเฟรชหน้าเว็บใหม่อีกครั้ง");
+                    return;
+                }
+
+                var pdf = new InstancejsPDF('p', 'mm', 'a4');
+                var imgWidth = 210;
+                var imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
                 pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
                 pdf.save('TBV-ITD-FM-005_Change_Request_Form.pdf');
 
-                // คืนค่าเส้นขอบหน้าจอกลับมาให้พิมพ์ต่อได้
-                inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
-                textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
+                // คืนค่าเส้นขอบสำหรับการใช้งานต่อบนหน้าจอ
+                inputs.forEach(function(input) { input.style.borderBottom = '1px solid #9ca3af'; });
+                textareas.forEach(function(textarea) { textarea.style.border = '1px solid #9ca3af'; });
             }).catch(function(error) {
-                console.error("PDF Error: ", error);
-                alert("เกิดข้อผิดพลาดด้านระบบการจัดหน้ากระดาษ กรุณาลองกดใหม่อีกครั้ง");
+                console.error("ระบบประมวลผลผิดพลาด: ", error);
+                alert("ระบบสร้างไฟล์ขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง");
                 
-                // คืนค่าเส้นขอบหากระบบพัง
-                inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
-                textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
+                inputs.forEach(function(input) { input.style.borderBottom = '1px solid #9ca3af'; });
+                textareas.forEach(function(textarea) { textarea.style.border = '1px solid #9ca3af'; });
             });
         });
     </script>
