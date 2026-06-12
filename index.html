@@ -6,255 +6,194 @@
     <title>ThaiBev - Change Request Form</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
-        .a4-page {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
+        .form-container {
+            max-width: 800px;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
     </style>
 </head>
-<body class="bg-gray-100 py-10">
+<body class="bg-gray-50 py-10 px-4">
 
-    <div class="max-w-[210mm] mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
-        <h1 class="text-xl font-bold text-gray-800">ระบบกรอกแบบฟอร์มอิเล็กทรอนิกส์</h1>
+    <div class="max-w-[800px] mx-auto mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
+        <h1 class="text-lg font-bold text-gray-800">ระบบกรอกแบบฟอร์ม Change Request</h1>
         <button id="downloadPdfBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-md shadow transition flex items-center gap-2">
             💾 บันทึกและดาวน์โหลด PDF
         </button>
     </div>
 
-    <div id="form-to-print" class="a4-page text-xs text-gray-800 flex flex-col justify-between border border-gray-300">
-        
-        <div>
-            <div class="flex justify-between items-start border-b-2 border-gray-800 pb-3 mb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-green-700">ThaiBev</h2>
-                    <h3 class="text-sm font-bold">Change Request Form</h3>
-                </div>
-                <div class="w-64">
-                    <div class="flex items-center mb-1">
-                        <span class="w-28 font-semibold">Doc. No. / เลขที่เอกสาร:</span>
-                        <input type="text" class="border-b border-gray-400 flex-1 outline-none px-1">
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-28 font-semibold">Doc. Date / วันที่เอกสาร:</span>
-                        <input type="date" class="border-b border-gray-400 flex-1 outline-none px-1">
-                    </div>
-                </div>
+    <div class="form-container border border-gray-200">
+        <div class="border-b border-gray-300 pb-4 mb-6">
+            <h2 class="text-xl font-bold text-green-700">ThaiBev</h2>
+            <p class="text-sm text-gray-500">Change Request Application Form</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-3 rounded">
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Doc. No. / เลขที่เอกสาร</label>
+                <input type="text" id="docNo" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none bg-white">
             </div>
-
-            <div class="mb-4">
-                <h4 class="bg-gray-200 font-bold px-2 py-1 mb-2 border border-gray-400">Part 1: For Requester / ส่วนที่ 1: สำหรับผู้แจ้ง</h4>
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2 px-2">
-                    <div class="flex items-center"><span class="w-28">Name / ชื่อ:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none"></div>
-                    <div class="flex items-center"><span class="w-32">Employee ID / รหัสพนักงาน:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none"></div>
-                    <div class="flex items-center"><span class="w-28">Department / หน่วยงาน:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none"></div>
-                    <div class="flex items-center"><span class="w-32">Phone / เบอร์ติดต่อ:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none"></div>
-                    <div class="flex items-center"><span class="w-28">Company / บริษัท:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none"></div>
-                    <div class="flex items-center"><span class="w-32">E-mail:</span><input type="email" class="border-b border-gray-400 flex-1 outline-none"></div>
-                </div>
-
-                <div class="mt-3 px-2">
-                    <span class="font-bold block mb-1">Choose Request:</span>
-                    <div class="grid grid-cols-4 gap-2">
-                        <label class="flex items-center gap-1"><input type="checkbox"> System change request</label>
-                        <label class="flex items-center gap-1"><input type="checkbox"> Authorizations change request</label>
-                        <label class="flex items-center gap-1"><input type="checkbox"> Reset Password</label>
-                    </div>
-                </div>
-
-                <div class="mt-3 px-2 border border-gray-300 p-2 rounded">
-                    <span class="font-bold block mb-2">Choose System:</span>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="flex items-center gap-1 font-semibold mb-1"><input type="checkbox"> ERP System: SAP</label>
-                            <label class="flex items-center gap-1 ml-4 mb-1"><input type="checkbox"> SAP BO/BW Financial & Accounting</label>
-                            <div class="ml-8 grid grid-cols-2 gap-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> LOAN</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Fincon Cash flow</label>
-                            </div>
-                            <span class="font-semibold block mt-2 mb-1">Forecast To Delivery:</span>
-                            <div class="ml-4 grid grid-cols-1 gap-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> TOMS / PLUS Transport</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Sales Forecast / SOP</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Fuel TRP / PLUS Request Plan</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> PLUS Service Ordering / WMS</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> PLUS sDelivery (POD)</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Batch Traceability</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> RMS/PLUS Pallet & Returnable</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> T/O Suggestion PLUS Master data</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> MPT</label>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="font-semibold block mb-1">Recruit To Retire: TMS</span>
-                            <div class="ml-4 grid grid-cols-2 gap-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> Time Attendance</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> ePayslip</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Beverest Life</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Claims</label>
-                            </div>
-                            <span class="font-semibold block mt-2 mb-1">Procure To Pay:</span>
-                            <div class="ml-4 grid grid-cols-2 gap-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> SLCM</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> MDM</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> E-Expense</label>
-                            </div>
-                            <span class="font-semibold block mt-2 mb-1">Cross Buy:</span>
-                            <div class="ml-4 grid grid-cols-2 gap-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> Cross PO</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Cross Invoice</label>
-                            </div>
-                            <span class="font-semibold block mt-2 mb-1">Others:</span>
-                            <div class="ml-4 grid grid-cols-2 gap-x-1 gap-y-1">
-                                <label class="flex items-center gap-1"><input type="checkbox"> SignTech Paperless</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> DHB</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> WIN</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> TBCT (Call Center)</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> FBOH / PG / MMX</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> VTEC</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Car Reservation</label>
-                                <label class="flex items-center gap-1"><input type="checkbox"> Promise</label>
-                            </div>
-                            <div class="flex items-center mt-2 ml-4">
-                                <label class="flex items-center gap-1 whitespace-nowrap"><input type="checkbox"> Other, specify: </label>
-                                <input type="text" class="border-b border-gray-400 flex-1 outline-none ml-1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-3 px-2">
-                    <span class="font-bold block mb-1">Objectives and requirements / วัตถุประสงค์และรายละเอียดความต้องการ:</span>
-                    <textarea class="w-full border border-gray-400 p-1 h-12 outline-none resize-none rounded"></textarea>
-                    
-                    <span class="font-bold block mt-2 mb-1">Accounting or Revenue Department Government impact / ผลกระทบทางบัญชี หรือสรรพากร:</span>
-                    <textarea class="w-full border border-gray-400 p-1 h-12 outline-none resize-none rounded"></textarea>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="border border-gray-400 rounded p-2">
-                    <h4 class="bg-gray-100 font-bold px-1 py-0.5 mb-2 border-b border-gray-400">Part 2: For IT Business Partner</h4>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <label class="flex items-center gap-1"><input type="checkbox"> Form</label>
-                        <label class="flex items-center gap-1"><input type="checkbox"> Screen</label>
-                        <label class="flex items-center gap-1"><input type="checkbox"> Report</label>
-                        <label class="flex items-center gap-1"><input type="checkbox"> Configuration</label>
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <span class="whitespace-nowrap">Others ระบุ:</span>
-                        <input type="text" class="border-b border-gray-400 flex-1 outline-none ml-1">
-                    </div>
-                    <span class="block font-semibold mb-1">More Detail / อธิบายเพิ่มเติม:</span>
-                    <textarea class="w-full border border-gray-400 p-1 h-10 outline-none resize-none mb-2"></textarea>
-                    
-                    <div class="text-[10px] space-y-1">
-                        <div class="flex justify-between"><span>Requested by: .............................</span><span>Approved by: .............................</span></div>
-                        <div class="flex justify-between"><span>Date: ...........................................</span><span>Date: ...........................................</span></div>
-                    </div>
-                </div>
-
-                <div class="border border-gray-400 rounded p-2">
-                    <h4 class="bg-gray-100 font-bold px-1 py-0.5 mb-2 border-b border-gray-400">Part 2.5: Requested / Approved (Cont.)</h4>
-                    <div class="text-[10px] space-y-2 mt-2">
-                        <p class="font-semibold">Submitted by (ITBP/IT PO/Solution Service and Operation):</p>
-                        <div>Signed: ............................................................................ Date: .........................</div>
-                        <p class="font-semibold mt-2">Approved by (ITBP/ITPO/ Solution Service and Opt. MGR):</p>
-                        <div>Signed: ............................................................................ Date: .........................</div>
-                    </div>
-                    <div class="border-t border-gray-300 mt-3 pt-2">
-                        <h4 class="font-bold mb-1">Part 3: For IT Solution / ส่วนที่ 3: การดำเนินงาน IT Solution</h4>
-                        <div class="flex items-center mb-1"><span>CR / Version:</span><input type="text" class="border-b border-gray-400 flex-1 outline-none ml-1"></div>
-                        <textarea placeholder="Technical Impact & Rollback Plan..." class="w-full border border-gray-400 p-1 h-10 outline-none resize-none text-[10px]"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border border-gray-400 rounded p-2 mb-2">
-                <h4 class="bg-gray-200 font-bold px-2 py-0.5 mb-2 border border-gray-400">Part 4: For Auditor / ส่วนที่ 4: ส่งมอบงาน</h4>
-                <div class="grid grid-cols-2 gap-4 text-[11px]">
-                    <div>
-                        <span class="font-bold block mb-1">Status QA System:</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center gap-1"><input type="checkbox"> Accepted</label>
-                            <label class="flex items-center gap-1"><input type="checkbox"> Pending</label>
-                            <label class="flex items-center gap-1"><input type="checkbox"> Reject</label>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="font-bold block mb-1">Status Product System:</span>
-                        <div class="flex gap-4">
-                            <label class="flex items-center gap-1"><input type="checkbox"> Accepted</label>
-                            <label class="flex items-center gap-1"><input type="checkbox"> Pending</label>
-                            <label class="flex items-center gap-1"><input type="checkbox"> Reject</label>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-[10px] text-red-600 mt-2 italic font-semibold">
-                    * หมายเหตุ: กรณีหน่วยงานผู้ขอไม่มีการแจ้งผลการทดสอบภายใน 1 สัปดาห์นับจากวันที่ IT ส่งมอบงานให้ถือว่า Accepted โดยอัตโนมัติ
-                </p>
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Doc. Date / วันที่เอกสาร</label>
+                <input type="date" id="docDate" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none bg-white">
             </div>
         </div>
 
-        <div class="flex justify-between items-center border-t border-gray-400 pt-2 mt-4 text-[10px] text-gray-500">
-            <span>TBV-ITD-FM-005 Rev.2.0 Change Request Application Form</span>
-            <span>Page 1</span>
+        <div class="mb-6">
+            <h3 class="text-sm font-bold text-gray-800 bg-gray-100 p-2 rounded mb-3">Part 1: For Requester / ส่วนที่ 1: สำหรับผู้แจ้ง</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Name / ชื่อ-นามสกุล</label>
+                    <input type="text" id="reqName" value="โคมน อาจสาครมงคล" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Employee ID / รหัสพนักงาน</label>
+                    <input type="text" id="reqId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Department / หน่วยงาน</label>
+                    <input type="text" id="reqDept" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Phone / เบอร์ติดต่อ</label>
+                    <input type="text" id="reqPhone" value="0634465136" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Company / บริษัท</label>
+                    <input type="text" id="reqComp" value="nookpass@gmail.com (TH)" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">E-mail</label>
+                    <input type="email" id="reqEmail" value="nookpass@gmail.com" class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-sm font-bold text-gray-800 bg-gray-100 p-2 rounded mb-3">Requirements / รายละเอียดความต้องการ</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Objectives and requirements / วัตถุประสงค์และรายละเอียดความต้องการ</label>
+                    <textarea id="objectives" class="w-full border border-gray-300 rounded px-3 py-2 text-sm h-20 outline-none resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Accounting or Revenue Department Government impact / ผลกระทบทางบัญชี หรือสรรพากร</label>
+                    <textarea id="impact" class="w-full border border-gray-300 rounded px-3 py-2 text-sm h-20 outline-none resize-none"></textarea>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            var element = document.getElementById('form-to-print');
-            
-            // ปรับแต่งเส้นขอบชั่วคราวเพื่อความสวยงามในหน้าเอกสาร PDF
-            var inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"]');
-            inputs.forEach(function(input) { input.style.borderBottom = 'none'; });
-            var textareas = element.querySelectorAll('textarea');
-            textareas.forEach(function(textarea) { textarea.style.border = 'none'; });
+            try {
+                // ดึงค่าจากช่องกรอกต่างๆ บนหน้าเว็บ
+                var docNo = document.getElementById('docNo').value || '-';
+                var docDate = document.getElementById('docDate').value || '-';
+                var reqName = document.getElementById('reqName').value || '-';
+                var reqId = document.getElementById('reqId').value || '-';
+                var reqDept = document.getElementById('reqDept').value || '-';
+                var reqPhone = document.getElementById('reqPhone').value || '-';
+                var reqComp = document.getElementById('reqComp').value || '-';
+                var reqEmail = document.getElementById('reqEmail').value || '-';
+                var objectives = document.getElementById('objectives').value || '-';
+                var impact = document.getElementById('impact').value || '-';
 
-            // ใช้ html2canvas ทำการ Snap หน้าจอแบบไม่เก็บ Log ลึกๆ ที่อาจบล็อกการทำงานบนคลาวด์
-            html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                allowTaint: true
-            }).then(function(canvas) {
-                var imgData = canvas.toDataURL('image/png');
-                
-                // ค้นหาและเรียกใช้งานคลาสสร้างเอกสารในรูปแบบที่เข้ากันได้กับโครงสร้างเบราวเซอร์ทุกรุ่น
+                // เรียกเปิดระบบควบคุม jsPDF
                 var InstancejsPDF = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF ? window.jsPDF : null);
-                
                 if (!InstancejsPDF) {
-                    alert("ไม่สามารถโหลดระบบสร้างเอกสารได้ กรุณารีเฟรชหน้าเว็บใหม่อีกครั้ง");
+                    alert("ระบบสร้างเอกสารขัดข้องชั่วคราว กรุณารีเฟรชหน้าเว็บ");
                     return;
                 }
 
                 var pdf = new InstancejsPDF('p', 'mm', 'a4');
-                var imgWidth = 210;
-                var imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                pdf.save('TBV-ITD-FM-005_Change_Request_Form.pdf');
-
-                // คืนค่าเส้นขอบสำหรับการใช้งานต่อบนหน้าจอ
-                inputs.forEach(function(input) { input.style.borderBottom = '1px solid #9ca3af'; });
-                textareas.forEach(function(textarea) { textarea.style.border = '1px solid #9ca3af'; });
-            }).catch(function(error) {
-                console.error("ระบบประมวลผลผิดพลาด: ", error);
-                alert("ระบบสร้างไฟล์ขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง");
+                // ใช้ฟอนต์มาตรฐานระบบเพื่อความปลอดภัยและเสถียรสูงสุดบน Web Cloud
+                pdf.setFont("Helvetica", "bold");
+                pdf.setFontSize(22);
+                pdf.textColor = [21, 128, 61]; // สีเขียว ThaiBev
+                pdf.text("ThaiBev", 20, 25);
                 
-                inputs.forEach(function(input) { input.style.borderBottom = '1px solid #9ca3af'; });
-                textareas.forEach(function(textarea) { textarea.style.border = '1px solid #9ca3af'; });
-            });
+                pdf.setFont("Helvetica", "normal");
+                pdf.setFontSize(14);
+                pdf.textColor = [100, 100, 100];
+                pdf.text("Change Request Application Form", 20, 32);
+                
+                // วาดเส้นแบ่งหัวข้อ
+                pdf.setDrawColor(200, 200, 200);
+                pdf.line(20, 38, 190, 38);
+                
+                // ข้อมูลเลขที่เอกสาร
+                pdf.setFontSize(10);
+                pdf.textColor = [50, 50, 50];
+                pdf.text("Doc No: " + docNo, 130, 25);
+                pdf.text("Doc Date: " + docDate, 130, 31);
+                
+                // ส่วนที่ 1: ข้อมูลผู้ส่ง
+                pdf.setFillColor(240, 240, 240);
+                pdf.rect(20, 45, 170, 8, "F");
+                pdf.setFont("Helvetica", "bold");
+                pdf.text("PART 1: REQUESTER INFORMATION", 24, 50.5);
+                
+                // รายละเอียดผู้แจ้ง (สร้างตารางข้อมูลสะอาดตาใน PDF)
+                pdf.setFont("Helvetica", "normal");
+                var startY = 62;
+                var lineSpacing = 8;
+                
+                pdf.text("Requester Name: " + reqName, 22, startY);
+                pdf.text("Employee ID: " + reqId, 110, startY);
+                
+                pdf.text("Department: " + reqDept, 22, startY + lineSpacing);
+                pdf.text("Phone Number: " + reqPhone, 110, startY + lineSpacing);
+                
+                pdf.text("Company Name: " + reqComp, 22, startY + (lineSpacing * 2));
+                pdf.text("Email Address: " + reqEmail, 110, startY + (lineSpacing * 2));
+                
+                // วาดเส้นกรอบล้อมรอบข้อมูลผู้แจ้ง
+                pdf.rect(20, 55, 170, 26);
+                
+                // ส่วนที่ 2: วัตถุประสงค์ความต้องการ
+                var part2Y = 90;
+                pdf.setFillColor(240, 240, 240);
+                pdf.rect(20, part2Y, 170, 8, "F");
+                pdf.setFont("Helvetica", "bold");
+                pdf.text("PART 2: OBJECTIVES & REQUIREMENTS", 24, part2Y + 5.5);
+                
+                pdf.setFont("Helvetica", "normal");
+                pdf.text("Detail of Requirements:", 22, part2Y + 15);
+                
+                // ตัดคำข้อความยาวๆ ให้ขึ้นบรรทัดใหม่อัตโนมัติในกระดาษ PDF
+                var splitObjectives = pdf.splitTextToSize(objectives, 160);
+                pdf.text(splitObjectives, 24, part2Y + 21);
+                
+                var currentY = part2Y + 25 + (splitObjectives.length * 5);
+                
+                pdf.text("Accounting or Government Impact:", 22, currentY);
+                var splitImpact = pdf.splitTextToSize(impact, 160);
+                pdf.text(splitImpact, 24, currentY + 6);
+                
+                // ส่วนท้ายแผ่นเอกสาร
+                pdf.setDrawColor(220, 220, 220);
+                pdf.line(20, 275, 190, 275);
+                pdf.setFontSize(8);
+                pdf.textColor = [150, 150, 150];
+                pdf.text("TBV-ITD-FM-005 Rev.2.0 | Automated Digital Form System", 20, 280);
+                
+                // สั่งเซฟดาวน์โหลดไฟล์ทันที
+                pdf.save('Change_Request_' + (docNo !== '-' ? docNo : 'Document') + '.pdf');
+                
+            } catch (error) {
+                console.error(error);
+                alert("เกิดข้อผิดพลาดภายในโครงสร้างคำสั่งกรอกแบบฟอร์ม กรุณาลองใหม่อีกครั้ง");
+            }
         });
     </script>
 </body>
