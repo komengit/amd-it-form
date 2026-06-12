@@ -214,41 +214,51 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
-            const { jsPDF } = window.jspdf;
-            const element = document.getElementById('form-to-print');
-            
-            // ซ่อนขอบเส้นของ input และแนวแบ่งชั่วคราวก่อนจับภาพเพื่อความสวยงามใน PDF
-            const inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"], textarea');
-            inputs.forEach(input => input.style.borderBottom = 'none');
+<script>
+    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
+        // ดึงพื้นที่เอกสารที่ต้องการจับภาพ
+        const element = document.getElementById('form-to-print');
+        
+        // 1. ซ่อนขอบเส้นของ input และ textarea ชั่วคราวก่อนจับภาพเพื่อให้ PDF สวยงามเหมือนเอกสารจริง
+        const inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"], textarea');
+        inputs.forEach(input => input.style.borderBottom = 'none');
+        const textareas = element.querySelectorAll('textarea');
+        textareas.forEach(textarea => textarea.style.border = 'none');
 
-            // ใช้ html2canvas แปลงโครงสร้าง HTML เป็นภาพคุณภาพสูง
+        try {
+            // 2. แปลงหน้าจอ HTML เป็นภาพด้วย html2canvas (ตั้งค่าดึงฟอนต์ภาษาไทยให้คมชัด)
             const canvas = await html2canvas(element, {
-                scale: 2, // เพิ่มความคมชัดของตัวอักษร
-                useCORS: true
+                scale: 2, // เพิ่มความละเอียดภาพเป็น 2 เท่า ตัวหนังสือจะไม่แตก
+                useCORS: true,
+                allowTaint: true,
+                logging: false
             });
             
-            // คืนค่าเส้นขอบของ Input บนหน้าเว็บให้เหมือนเดิมหลังจับภาพเสร็จ
-            inputs.forEach(input => {
-                if(input.tagName === 'TEXTAREA') {
-                    input.style.border = '1px solid #9ca3af';
-                } else {
-                    input.style.borderBottom = '1px solid #9ca3af';
-                }
-            });
-
             const imgData = canvas.toDataURL('image/png');
             
-            // สร้างไฟล์ PDF ขนาด A4 แนวตั้ง
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = 210; // ขนาดความกว้าง A4 (มม.)
+            // 3. เรียกใช้งาน jsPDF ด้วยคำสั่งที่ถูกต้องและเสถียรกว่าเดิม
+            const { jspdf } = window;
+            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+            
+            const imgWidth = 210; // ความกว้างหน้า A4 (มม.)
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
+            // วาดภาพลงบน PDF
             pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-            // ดาวน์โหลดไฟล์ตั้งชื่อตามแบบฟอร์มเอกสาร
+            
+            // 4. สั่งดาวน์โหลดไฟล์ลงเครื่องทันที
             pdf.save('TBV-ITD-FM-005_Change_Request_Form.pdf');
-        });
-    </script>
+
+        } catch (error) {
+            console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
+            alert("ไม่สามารถสร้าง PDF ได้ชั่วคราว กรุณาลองใหม่อีกครั้ง");
+        } finally {
+            // 5. คืนค่าเส้นขอบของ Input บนหน้าเว็บให้กลับมามองเห็นและพิมพ์ต่อได้เหมือนเดิม
+            inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
+            textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
+        }
+    });
+</script>
+    
 </body>
 </html>
