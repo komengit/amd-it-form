@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThaiBev - Change Request Form</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
-        /* สไตล์สำหรับจำลองหน้ากระดาษ A4 บนหน้าเว็บ */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
@@ -18,10 +19,6 @@
             margin: 0 auto;
             background: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        @media print {
-            body { background: none; }
-            .a4-page { box-shadow: none; padding: 0; margin: 0; }
         }
     </style>
 </head>
@@ -146,7 +143,7 @@
 
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="border border-gray-400 rounded p-2">
-                    <h4 class="bg-gray-100 font-bold px-1 py-0.5 mb-2 border-b border-gray-400">Part 2: For IT Business Partner / ส่วนที่ 2</h4>
+                    <h4 class="bg-gray-100 font-bold px-1 py-0.5 mb-2 border-b border-gray-400">Part 2: For IT Business Partner</h4>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <label class="flex items-center gap-1"><input type="checkbox"> Form</label>
                         <label class="flex items-center gap-1"><input type="checkbox"> Screen</label>
@@ -214,51 +211,46 @@
         </div>
     </div>
 
-<script>
-    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
-        // ดึงพื้นที่เอกสารที่ต้องการจับภาพ
-        const element = document.getElementById('form-to-print');
-        
-        // 1. ซ่อนขอบเส้นของ input และ textarea ชั่วคราวก่อนจับภาพเพื่อให้ PDF สวยงามเหมือนเอกสารจริง
-        const inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"], textarea');
-        inputs.forEach(input => input.style.borderBottom = 'none');
-        const textareas = element.querySelectorAll('textarea');
-        textareas.forEach(textarea => textarea.style.border = 'none');
+    <script>
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const element = document.getElementById('form-to-print');
+            
+            // ซ่อนเส้นขอบของฟิลด์พิมพ์ชั่วคราว
+            const inputs = element.querySelectorAll('input[type="text"], input[type="date"], input[type="email"]');
+            inputs.forEach(input => input.style.borderBottom = 'none');
+            const textareas = element.querySelectorAll('textarea');
+            textareas.forEach(textarea => textarea.style.border = 'none');
 
-        try {
-            // 2. แปลงหน้าจอ HTML เป็นภาพด้วย html2canvas (ตั้งค่าดึงฟอนต์ภาษาไทยให้คมชัด)
-            const canvas = await html2canvas(element, {
-                scale: 2, // เพิ่มความละเอียดภาพเป็น 2 เท่า ตัวหนังสือจะไม่แตก
+            // เรียกใช้คำสั่ง html2canvas แบบดั้งเดิมที่เสถียรต่อเบราวเซอร์
+            html2canvas(element, {
+                scale: 2,
                 useCORS: true,
-                allowTaint: true,
                 logging: false
-            });
-            
-            const imgData = canvas.toDataURL('image/png');
-            
-            // 3. เรียกใช้งาน jsPDF ด้วยคำสั่งที่ถูกต้องและเสถียรกว่าเดิม
-            const { jspdf } = window;
-            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-            
-            const imgWidth = 210; // ความกว้างหน้า A4 (มม.)
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            // วาดภาพลงบน PDF
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-            
-            // 4. สั่งดาวน์โหลดไฟล์ลงเครื่องทันที
-            pdf.save('TBV-ITD-FM-005_Change_Request_Form.pdf');
+            }).then(function(canvas) {
+                const imgData = canvas.toDataURL('image/png');
+                
+                // วิธีประกาศเรียกใช้คลาสจาก window.jspdf ที่ถูกต้องที่สุด
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save('TBV-ITD-FM-005_Change_Request_Form.pdf');
 
-        } catch (error) {
-            console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
-            alert("ไม่สามารถสร้าง PDF ได้ชั่วคราว กรุณาลองใหม่อีกครั้ง");
-        } finally {
-            // 5. คืนค่าเส้นขอบของ Input บนหน้าเว็บให้กลับมามองเห็นและพิมพ์ต่อได้เหมือนเดิม
-            inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
-            textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
-        }
-    });
-</script>
-    
+                // คืนค่าเส้นขอบหน้าจอกลับมาให้พิมพ์ต่อได้
+                inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
+                textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
+            }).catch(function(error) {
+                console.error("PDF Error: ", error);
+                alert("เกิดข้อผิดพลาดด้านระบบการจัดหน้ากระดาษ กรุณาลองกดใหม่อีกครั้ง");
+                
+                // คืนค่าเส้นขอบหากระบบพัง
+                inputs.forEach(input => input.style.borderBottom = '1px solid #9ca3af');
+                textareas.forEach(textarea => textarea.style.border = '1px solid #9ca3af');
+            });
+        });
+    </script>
 </body>
 </html>
